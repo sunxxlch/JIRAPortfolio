@@ -33,13 +33,18 @@
   margin: 0px 0;
 }
 
+.headerLogo button{
+  display: flex;
+  gap: 10px;
+}
+
 .createbutton {
   background-color: rgb(17, 41, 63);
   color: rgb(241, 241, 242);
-  margin-right: 20px;
   height: 35px;
   width: 200px;
-  
+  margin-right: 20px;
+
 }
 
 .createbutton h1 {
@@ -48,7 +53,6 @@
   text-align: center;
   margin-top: 0%;
 }
-
 
 
 .portfolio-container {

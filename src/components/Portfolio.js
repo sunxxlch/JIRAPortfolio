@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { LuDelete } from "react-icons/lu";
+import RefreshIcon from '@mui/icons-material/Refresh';
 import api from "./apiRefresh";
 
 
@@ -29,6 +30,7 @@ const Portfolio = () => {
     const [newDefectValue, setNewDefectValue] = useState("");
     const [newReportname, setNewReportname] = useState("");
     const [newReportUrl, setNewReportUrl] = useState("");
+    const [refresh, setRefresh] = useState("");
 
 
     const openChartModal = (chartData) => {
@@ -51,9 +53,9 @@ const Portfolio = () => {
         setDefectType(type)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log("Hello")
-    },[])
+    }, [])
 
 
     useEffect(() => {
@@ -241,7 +243,23 @@ const Portfolio = () => {
         }
     };
 
+    const refreshPortfolioDetails = async () => {
+        setRefresh(true);
+        const response = await api.get(`/RefreshData/${ProjectName}/${portfolioID}`);
+        if (response.status === 200) {
+            console.log("200");
+            const formattedData = response.data.map(({ name, Pass, Fail, WIP, Unexecuted }) => ({
+                name,
+                Fail,
+                Unexecuted,
+                Pass,
+                WIP
 
+            }));
+            setRefresh(false);
+            setProjects(formattedData);
+        }
+    }
 
     return (
         <div className="portfolio">
@@ -249,23 +267,35 @@ const Portfolio = () => {
                 <div onClick={Home}>
                     <h2>Cengage DBSFE</h2>
                 </div>
-                {localStorage.getItem("role") === "ADMIN" && (
-                    <button
-                        id="createnewpostrfolio"
-                        className="createbutton"
-                        onClick={redirectEditPortfolio}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <a
+                        title='Refresh Portfolio'
                     >
-                        <h1>Edit Portfolio</h1>
-                    </button>
-                )}
-
+                        <RefreshIcon style={{
+                            color: "white",
+                            height: "30px",
+                            width: "30px"
+                        }}
+                            onClick={refreshPortfolioDetails} />
+                    </a>
+                    {localStorage.getItem("role") === "ADMIN" && (
+                        <button
+                            id="createnewpostrfolio"
+                            className="createbutton"
+                            onClick={redirectEditPortfolio}
+                        >
+                            <h1>Edit Portfolio</h1>
+                        </button>
+                    )}
+                </div>
             </div>
             {loading && (
-                <div className="not-found-container">
-                    <h2 className="not-found" style={{
-                        alignContent:"center"
-                    }}>Loading...</h2>
-                </div>
+                <div className="chart-container">
+                <h2 className="refresh" style={{
+                    alignItems:"center",
+                    marginLeft:"40%"
+                }}>Loading...</h2>
+            </div>
             )}
             {!exists ? (
                 <div className="not-found-container">
@@ -347,40 +377,49 @@ const Portfolio = () => {
                             </tbody>
                         </table>
                     </div>
-                    <div className="chart-container">
-                        {[...data]
-                            .sort((a, b) => a.name.localeCompare(b.name))
-                            .map((chartData, index) => (
-                                <div key={index} className="chart" onClick={() => openChartModal(chartData)}>
-                                    <ResponsiveContainer width={300} height={300}>
-                                        <PieChart>
-                                            <Pie
-                                                data={Object.entries(chartData)
-                                                    .filter(([key]) => key !== "name")
-                                                    .map(([name, value]) => ({
-                                                        name,
-                                                        value
-                                                    }))}
-                                                dataKey="value"
-                                                cx="50%"
-                                                cy="50%"
-                                                outerRadius={100}
-                                                fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
-                                                label={(entry) => (entry.value ? `${entry.value}%` : "")}
-                                            >
-                                                {Object.entries(chartData)
-                                                    .filter(([key]) => key !== "name")
-                                                    .map(([name]) => (
-                                                        <Cell key={name} fill={CATEGORY_COLORS[name] || "blue"} />
-                                                    ))}
-                                            </Pie>
-                                        </PieChart>
-                                        <div className='chartname'>{chartData.name}</div>
-                                    </ResponsiveContainer>
-                                </div>
-                            ))}
+                    {refresh ? (
+                        <div className="chart-container">
+                            <h2 className="refresh" style={{
+                                alignItems:"center",
+                                marginLeft:"40%"
+                            }}>Loading...</h2>
+                        </div>
+                    ) : (
+                        <div className="chart-container">
 
-                    </div>
+                            {[...data]
+                                .sort((a, b) => a.name.localeCompare(b.name))
+                                .map((chartData, index) => (
+                                    <div key={index} className="chart" onClick={() => openChartModal(chartData)}>
+                                        <ResponsiveContainer width={300} height={300}>
+                                            <PieChart>
+                                                <Pie
+                                                    data={Object.entries(chartData)
+                                                        .filter(([key]) => key !== "name")
+                                                        .map(([name, value]) => ({
+                                                            name,
+                                                            value
+                                                        }))}
+                                                    dataKey="value"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={100}
+                                                    fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                                                    label={(entry) => (entry.value ? `${entry.value}%` : "")}
+                                                >
+                                                    {Object.entries(chartData)
+                                                        .filter(([key]) => key !== "name")
+                                                        .map(([name]) => (
+                                                            <Cell key={name} fill={CATEGORY_COLORS[name] || "blue"} />
+                                                        ))}
+                                                </Pie>
+                                            </PieChart>
+                                            <div className='chartname'>{chartData.name}</div>
+                                        </ResponsiveContainer>
+                                    </div>
+                                ))}
+
+                        </div>)}
                     {/* reports data*/}
                     {selectedChart && (
                         <div className="modal-overlay" onClick={closeChartModal}>
@@ -419,19 +458,19 @@ const Portfolio = () => {
                                                                 className="delete-btn"
                                                                 onClick={() => handlereportDelete(selectedChart.name, report.name, report.url)}
                                                             >
-                                                               < LuDelete/>
+                                                                < LuDelete />
                                                             </button>
                                                         )}
                                                     </td>
                                                 </tr>
                                             ))
-                                            ) : (
-                                                <tr>
-                                                    <td className='empty Data' style={{ textAlign: "center",color: "grey"}}>
-                                                        No reports found
-                                                    </td>
-                                                </tr>
-                                            )}
+                                        ) : (
+                                            <tr>
+                                                <td className='empty Data' style={{ textAlign: "center", color: "grey" }}>
+                                                    No reports found
+                                                </td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -483,7 +522,7 @@ const Portfolio = () => {
                                                     <a href={dfctdata.value} target="_blank" rel="noopener noreferrer">
                                                         {dfctdata.key}
                                                     </a>
-                                                    <button className="delete-btn" onClick={() => handleDelete(dfctdata.key)}>< LuDelete/></button>
+                                                    <button className="delete-btn" onClick={() => handleDelete(dfctdata.key)}>< LuDelete /></button>
                                                 </td>
                                             </tr>
                                         ))}
