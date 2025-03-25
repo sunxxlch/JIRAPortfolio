@@ -1,9 +1,11 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
 import { useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { LuDelete } from "react-icons/lu";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import api from "./apiRefresh";
+import Switch from "react-switch";
 
 
 const CATEGORY_COLORS = {
@@ -31,6 +33,7 @@ const Portfolio = () => {
     const [newReportname, setNewReportname] = useState("");
     const [newReportUrl, setNewReportUrl] = useState("");
     const [refresh, setRefresh] = useState("");
+    const [isBarGraph, setIsBarGraph] = useState(true);
 
 
     const openChartModal = (chartData) => {
@@ -265,7 +268,7 @@ const Portfolio = () => {
         <div className="portfolio">
             <div className='headerLogo'>
                 <div onClick={Home}>
-                    <h2>Cengage DBSFE</h2>
+                    <h2>Release Dashboard</h2>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <a
@@ -291,11 +294,11 @@ const Portfolio = () => {
             </div>
             {loading && (
                 <div className="chart-container">
-                <h2 className="refresh" style={{
-                    alignItems:"center",
-                    marginLeft:"40%"
-                }}>Loading...</h2>
-            </div>
+                    <h2 className="refresh" style={{
+                        alignItems: "center",
+                        marginLeft: "40%"
+                    }}>Loading...</h2>
+                </div>
             )}
             {!exists ? (
                 <div className="not-found-container">
@@ -312,7 +315,7 @@ const Portfolio = () => {
                                             style={{
                                                 width: "75%",
                                                 textAlign: "left",
-                                                paddingRight: "160px"
+                                                paddingRight: "10px"
                                             }}
 
                                         >Release Defects</a>
@@ -348,7 +351,7 @@ const Portfolio = () => {
                                             style={{
                                                 width: "75%",
                                                 textAlign: "left",
-                                                paddingRight: "140px"
+                                                paddingRight: "10px"
                                             }}
 
                                         >Defects Identified</a>
@@ -358,6 +361,7 @@ const Portfolio = () => {
                                                     opendefectModal(bugData);
                                                     setdefectcategory("Defects Identified");
                                                 }}
+                                                
                                             >&#9998;</a>
                                         )}
                                     </th>
@@ -377,165 +381,238 @@ const Portfolio = () => {
                             </tbody>
                         </table>
                     </div>
-                    {refresh ? (
-                        <div className="chart-container">
-                            <h2 className="refresh" style={{
-                                alignItems:"center",
-                                marginLeft:"40%"
-                            }}>Loading...</h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div >
+                            <label style={{
+                                fontWeight:"bold",
+                                paddingRight:"10px"
+                            }}>
+                                Pie Chart
+                            </label>
+                            <Switch
+                                checked={isBarGraph}
+                                onChange={checked => setIsBarGraph(checked)}
+                                onColor="#86d3ff"
+                                onHandleColor="#2693e6"
+                                handleDiameter={25}
+                                uncheckedIcon={false}
+                                checkedIcon={false}
+                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                height={20}
+                                width={50}
+                                placeholder='View Mode'
+                            />
+                            <label style={{
+                                fontWeight:"bold",
+                                paddingLeft:"10px"
+                            }}>
+                                Bar Graph
+                            </label>
                         </div>
-                    ) : (
-                        <div className="chart-container">
-
-                            {[...data]
-                                .sort((a, b) => a.name.localeCompare(b.name))
-                                .map((chartData, index) => (
-                                    <div key={index} className="chart" onClick={() => openChartModal(chartData)}>
-                                        <ResponsiveContainer width={300} height={300}>
-                                            <PieChart>
-                                                <Pie
-                                                    data={Object.entries(chartData)
-                                                        .filter(([key]) => key !== "name")
-                                                        .map(([name, value]) => ({
-                                                            name,
-                                                            value
-                                                        }))}
-                                                    dataKey="value"
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    outerRadius={100}
-                                                    fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
-                                                    label={(entry) => (entry.value ? `${entry.value}%` : "")}
-                                                >
-                                                    {Object.entries(chartData)
-                                                        .filter(([key]) => key !== "name")
-                                                        .map(([name]) => (
-                                                            <Cell key={name} fill={CATEGORY_COLORS[name] || "blue"} />
-                                                        ))}
-                                                </Pie>
-                                            </PieChart>
+                        {refresh ? (
+                            <div className="chart-container">
+                                <h2 className="refresh" style={{
+                                    alignItems: "center",
+                                    marginLeft: "40%"
+                                }}>Loading...</h2>
+                            </div>
+                        ) : (
+                            <div className="chart-container">
+                                {[...data]
+                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                    .map((chartData, index) => (
+                                        <div key={index} className="chart" onClick={() => openChartModal(chartData)}>
+                                            <ResponsiveContainer width={310} height={260} >
+                                                {isBarGraph ? (
+                                                    <BarChart data={[
+                                                        { category: 'Fail-' + chartData.Fail, count: chartData.Fail / (chartData.Fail + chartData.Unexecuted + chartData.Pass + chartData.WIP) * 100 },
+                                                        { category: 'Unex-' + chartData.Unexecuted, count: chartData.Unexecuted / (chartData.Fail + chartData.Unexecuted + chartData.Pass + chartData.WIP) * 100 },
+                                                        { category: 'Pass-' + chartData.Pass, count: chartData.Pass / (chartData.Fail + chartData.Unexecuted + chartData.Pass + chartData.WIP) * 100 },
+                                                        { category: 'WIP-' + chartData.WIP, count: chartData.WIP / (chartData.Fail + chartData.Unexecuted + chartData.Pass + chartData.WIP) * 100 },
+                                                    ]}
+                                                    margin={{
+                                                        top: 0,
+                                                        right: 0,
+                                                        left: 0,
+                                                        bottom: 14,  
+                                                    }}
+                                                    >
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis
+                                                            dataKey="category"
+                                                            tick={({ x, y, payload }) => {
+                                                                const [category, count] = payload.value.split('-');
+                                                                return (
+                                                                    <g transform={`translate(${x},${y})`}>
+                                                                        <text x={14} y={0} dy={16} textAnchor="end" fill="#666">
+                                                                            {category}
+                                                                        </text>
+                                                                        <text x={10} y={0} dy={35} textAnchor="end" fill="#666">
+                                                                            {count}
+                                                                        </text>
+                                                                    </g>
+                                                                );
+                                                            }}
+                                                        />
+                                                        <YAxis />
+                                                        <Tooltip />
+                                                        {/* <Legend /> */}
+                                                        <Bar dataKey={'count'} fill='#8884D8' />
+                                                    </BarChart>
+                                                ) : (
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={Object.entries(chartData)
+                                                                .filter(([key]) => key !== "name")
+                                                                .map(([name, value]) => {
+                                                                    const totalCount = chartData.Fail + chartData.Unexecuted + chartData.Pass + chartData.WIP;
+                                                                    const ratio = (value / totalCount) * 100;
+                                                                    return {
+                                                                        name,
+                                                                        count: value,
+                                                                        value: ratio
+                                                                    }
+                                                                })}
+                                                            dataKey="value"
+                                                            cx="50%"
+                                                            cy="50%"
+                                                            outerRadius={95}
+                                                            fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                                                            label={(entry) => (entry.value ? `${entry.count}` : "")}
+                                                        >
+                                                            {Object.entries(chartData)
+                                                                .filter(([key]) => key !== "name")
+                                                                .map(([name]) => (
+                                                                    <Cell key={name} fill={CATEGORY_COLORS[name] || "blue"} />
+                                                                ))}
+                                                        </Pie>
+                                                    </PieChart>
+                                                )}
+                                            </ResponsiveContainer>
                                             <div className='chartname'>{chartData.name}</div>
-                                        </ResponsiveContainer>
-                                    </div>
-                                ))}
+                                        </div>
+                                    ))}
 
-                        </div>)}
-                    {/* reports data*/}
-                    {selectedChart && (
-                        <div className="modal-overlay" onClick={closeChartModal}>
-                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                                <h2>{selectedChart.name} Execution Details</h2>
-                                {localStorage.getItem("role") === "ADMIN" && (
-                                    <div className="input-container" >
-                                        <input
-                                            type="text"
-                                            placeholder="Enter report name"
-                                            value={newReportname}
-                                            onChange={(e) => setNewReportname(e.target.value)}
-                                        />
-                                        <input
-                                            type="text"
-                                            placeholder="Enter report URL"
-                                            value={newReportUrl}
-                                            onChange={(e) => setNewReportUrl(e.target.value)}
-                                        />
-                                        <button className="add-defect-btn" onClick={() => handleAddReport(selectedChart.name)}>
-                                            ➕ Add Report to Portfolio
-                                        </button>
-                                    </div>
-                                )}
-                                <table className="modal-table">
-                                    <tbody>
-                                        {reportsData.length > 0 ? (
-                                            reportsData.map((report, index) => (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <a href={report.url} target="_blank" rel="noopener noreferrer">
-                                                            {report.name}
-                                                        </a>
-                                                        {localStorage.getItem("role") === "ADMIN" && (
-                                                            <button
-                                                                className="delete-btn"
-                                                                onClick={() => handlereportDelete(selectedChart.name, report.name, report.url)}
-                                                            >
-                                                                < LuDelete />
-                                                            </button>
-                                                        )}
+                            </div>
+                        )}
+                        {/* reports data*/}
+                        {selectedChart && (
+                            <div className="modal-overlay" onClick={closeChartModal}>
+                                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                    <h2>{selectedChart.name} Execution Details</h2>
+                                    {localStorage.getItem("role") === "ADMIN" && (
+                                        <div className="input-container" >
+                                            <input
+                                                type="text"
+                                                placeholder="Enter report name"
+                                                value={newReportname}
+                                                onChange={(e) => setNewReportname(e.target.value)}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Enter report URL"
+                                                value={newReportUrl}
+                                                onChange={(e) => setNewReportUrl(e.target.value)}
+                                            />
+                                            <button className="add-defect-btn" onClick={() => handleAddReport(selectedChart.name)}>
+                                                ➕ Add Report to Portfolio
+                                            </button>
+                                        </div>
+                                    )}
+                                    <table className="modal-table">
+                                        <tbody>
+                                            {reportsData.length > 0 ? (
+                                                reportsData.map((report, index) => (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            <a href={report.url} target="_blank" rel="noopener noreferrer">
+                                                                {report.name}
+                                                            </a>
+                                                            {localStorage.getItem("role") === "ADMIN" && (
+                                                                <button
+                                                                    className="delete-btn"
+                                                                    onClick={() => handlereportDelete(selectedChart.name, report.name, report.url)}
+                                                                >
+                                                                    < LuDelete />
+                                                                </button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td className='empty Data' style={{ textAlign: "center", color: "grey" }}>
+                                                        No reports found
                                                     </td>
                                                 </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td className='empty Data' style={{ textAlign: "center", color: "grey" }}>
-                                                    No reports found
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
-                    {/* Defects or Bugs data*/}
-                    {selecteddefectChart && (
-                        <div className="modal-overlay" onClick={closedefectModal}>
-                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                                <h2>{defectType}</h2>
-                                <div className="input-container">
-                                    <select
-                                        id="projects"
-                                        name="projects"
-                                        required
-                                        value={pid}
-                                        onChange={(e) => setPid(e.target.value)}
-                                    >
-                                        <option disabled value="">
-                                            Choose
-                                        </option>
-                                        {data.map((dt, index) => (
-                                            <option key={index} value={dt.name}>
-                                                {dt.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Defect Key"
-                                        value={newDefectKey}
-                                        onChange={(e) => setNewDefectKey(e.target.value)}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Enter Defect Value (URL)"
-                                        value={newDefectValue}
-                                        onChange={(e) => setNewDefectValue(e.target.value)}
-                                    />
-                                    <button className="add-defect-btn" onClick={() => handleAddDefect()}>
-                                        ➕ Add Defect to Portfolio
-                                    </button>
+                                            )}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table className="modal-table">
-                                    <tbody>
-                                        {selecteddefectChart.map((dfctdata, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    <a href={dfctdata.value} target="_blank" rel="noopener noreferrer">
-                                                        {dfctdata.key}
-                                                    </a>
-                                                    <button className="delete-btn" onClick={() => handleDelete(dfctdata.key)}>< LuDelete /></button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
                             </div>
-                        </div>
-                    )}
-
+                        )}
+                        {/* Defects or Bugs data*/}
+                        {selecteddefectChart && (
+                            <div className="modal-overlay" onClick={closedefectModal}>
+                                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                    <h2>{defectType}</h2>
+                                    <div className="input-container">
+                                        <select
+                                            id="projects"
+                                            name="projects"
+                                            required
+                                            value={pid}
+                                            onChange={(e) => setPid(e.target.value)}
+                                        >
+                                            <option disabled value="">
+                                                Choose
+                                            </option>
+                                            {data.map((dt, index) => (
+                                                <option key={index} value={dt.name}>
+                                                    {dt.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter Defect Key"
+                                            value={newDefectKey}
+                                            onChange={(e) => setNewDefectKey(e.target.value)}
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Enter Defect Value (URL)"
+                                            value={newDefectValue}
+                                            onChange={(e) => setNewDefectValue(e.target.value)}
+                                        />
+                                        <button className="add-defect-btn" onClick={() => handleAddDefect()}>
+                                            ➕ Add Defect to Portfolio
+                                        </button>
+                                    </div>
+                                    <table className="modal-table">
+                                        <tbody>
+                                            {selecteddefectChart.map((dfctdata, index) => (
+                                                <tr key={index}>
+                                                    <td>
+                                                        <a href={dfctdata.value} target="_blank" rel="noopener noreferrer">
+                                                            {dfctdata.key}
+                                                        </a>
+                                                        <button className="delete-btn" onClick={() => handleDelete(dfctdata.key)}>< LuDelete /></button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
         </div>
+
     );
 };
 

@@ -91,8 +91,16 @@ function Addport() {
           return;
         }
         const response = await api.put(`/updateportfolioDetails/${ProjectName}/${portfolioID}`, finalData);
+        if(response.status==200){
+          await api.get(`/RefreshData/${ProjectName}/${portfolioID}`);
+        }
+
+
       } else {
         const response = await api.post("/addPortfolio", finalData);
+        if(response.status==200){
+          await api.get(`/RefreshData/${ProjectName}/${portfolioID}`);
+        }
       }
 
       navigate(`/${pname}/${pkey}`);
@@ -118,6 +126,8 @@ function Addport() {
       const response = await api.post(`/addNewSet`, newsetData);
 
       if (response.status === 200) {
+        await api.get(`/RefreshData/${ProjectName}/${portfolioID}`);
+        //setup loading
         alert("Set added successfully!");
         window.location.reload(); 
       } else {
@@ -183,7 +193,7 @@ function Addport() {
   return (
     <div className="addport-container">
       <div className="headerLogo">
-        <h2 onClick={() => navigate("/")}>Cengage DBSFE</h2>
+        <h2 onClick={() => navigate("/")}>Release Dashboard</h2>
       </div>
 
       <div className="left-section">

@@ -66,7 +66,7 @@
 
 
 .table-container {
-  width: 25%;
+  width: 45%;
   height: 100vh; /* Ensures it stays visible */
   background-color: #f4f4f4;
   overflow-y: auto; 
@@ -74,38 +74,43 @@
   flex-direction: column;
 }
 
+.charthead-container {
+  width: 70%;
+  height: 20%;
+  background-color: #fff; 
+  
+}
 
 .chart-container {
-  width: 75%;
+  width: 100%;
   height: 100vh;
   background-color: #fff;
-  padding: 20px;
+  padding-left: 0px;
   display: flex;
   flex-wrap: wrap;
-  overflow-y: auto; /* Allows charts to scroll */
-  overflow-x: hidden;
+ 
+  
 }
 
 .chart {
-  width: 30%;
+  width: 31%;
   height: 300px;
-  margin: 10px;
+  margin-left: 15px;
+  margin-top: 20px;
+  
 }
 
 .chart-container .chart:nth-child(3n + 1):nth-last-child(-n + 2) {
-  padding-left: 15%;
+  padding-left: 20%;
   width: 30%; 
   
 }
 
-
 .chartname {
   text-align: center;
   font-weight: bold;
+  
 }
-
-
-
 
 
 .defect-table {
@@ -119,7 +124,10 @@
 .defect-table th,
 .defect-table td {
   border: none;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 0px;
+  padding-left: 2px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
@@ -128,9 +136,11 @@
 }
 
 .defect-table th {
-  font-size: 20px;
+  font-size: 15px;
   color: rgb(245, 247, 249);
   background-color: #2055a5;
+
+  
 }
 
 .projectsheader {
@@ -162,23 +172,55 @@
   background-color: #193a6b;
 }
 
+.allportfolio-container {
+  display: flex;
+}
+
 .portfolio-container {
   width: 100%;
   height: auto;
-  
   margin-left: 8px;
   
 }
 
+.message-container{
+  
+  width: 30%;
+  height: 30%;
+  padding-top: 5%;
+  padding-right: 2%;
+}
+
 .portfolio-table {
+  
   border: 2px solid black;
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 5%;
   table-layout: fixed;
+  
 }
 
-.portfolio-table th,
+.message-table {
+  border: 2px solid black;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 5%;
+  margin-left: 20px;
+  margin-right: 10px;
+  table-layout: fixed;
+  height: 30%;
+}
+
+.messageinput{
+  width:70%;
+}
+
+.sendMessage{
+  width:20%;
+}
+
+
 .portfolio-table td {
   border: none;
   padding: 10px;
@@ -197,6 +239,7 @@
   font-size: 20px;
   color: rgb(245, 247, 249);
   background-color: #2055a5;
+  
 }
 
 .portfolio-table tr {

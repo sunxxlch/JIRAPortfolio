@@ -52,13 +52,13 @@ const Login = () => {
         <div className="loginPage">
             <div className='headerLogo'>
                 <div onClick={() => navigate("/")}>
-                    <h2>Cengage DBSFE</h2>
+                    <h2>Release Dashboard</h2>
                 </div>
             </div>
             <table className='loginform'>
                 <thead>
                     <th>
-                        <a>Release Management Application</a>
+                        <a>Release Dashboard Application</a>
                     </th>
                 </thead>
                 <tbody>

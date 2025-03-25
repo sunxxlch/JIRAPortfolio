@@ -57,7 +57,7 @@ function Home() {
     <div className="portfolio">
       <div className="headerLogo" >
         <div onClick={Home}>
-          <h2>Cengage DBSFE</h2>
+          <h2>Release Dashboard</h2>
         </div>
           <button id='createnewpostrfolio' className='createbutton' onClick={logoutbtn}
           style={{
