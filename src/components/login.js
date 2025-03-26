@@ -79,6 +79,7 @@ const Login = () => {
                                 id='password'
                                 className='credentials'
                                 placeholder='Enter Password'
+                                type='password'
                                 onChange={(e) => setPassword(e.target.value)}
                             >
                             </input>
@@ -87,11 +88,12 @@ const Login = () => {
                 </tbody>
                 <button
                     className="logint-btn"
+                    type='submit'
+                    value='Enter'
                     style={{
-                        backgroundColor: isformfilled ? "green" :'white',
+                        backgroundColor: isformfilled ? "green" : 'white',
                         color: isformfilled ? "white" : "black",
                         cursor: isformfilled ? "pointer" : "not-allowed",
-                        
                     }}
                     onClick={handleSubmit}
                 >
@@ -99,8 +101,14 @@ const Login = () => {
                 </button>
 
             </table>
-            <p>Please use your credential to login.</p>
-            <p>LOGO</p>
+            <img src='logo.png' style={{
+                height:"40px",
+                width:"80px"
+            }}/>
+            <p style={{
+                fontSize:"8px"
+            }}>Release Dashboard</p>
+            
         </div>
     );
 }

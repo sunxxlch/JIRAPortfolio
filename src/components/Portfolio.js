@@ -122,7 +122,7 @@ const Portfolio = () => {
         if (selectedChart) {
             fetchReportsData(selectedChart.name);
         }
-    }, [selectedChart]);
+    });
 
     const fetchReportsData = async (name) => {
         try {
@@ -271,6 +271,7 @@ const Portfolio = () => {
                     <h2>Release Dashboard</h2>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
+                {localStorage.getItem("role") === "ADMIN" && (
                     <a
                         title='Refresh Portfolio'
                     >
@@ -281,6 +282,7 @@ const Portfolio = () => {
                         }}
                             onClick={refreshPortfolioDetails} />
                     </a>
+                )}
                     {localStorage.getItem("role") === "ADMIN" && (
                         <button
                             id="createnewpostrfolio"
@@ -371,7 +373,7 @@ const Portfolio = () => {
                                 {bugData.map((defect) => (
                                     <tr>
                                         <td>
-                                            <a href={defect.value} target="_blank" >
+                                            <a href={defect.value} target="" >
                                                 {defect.key}
                                             </a>
                                         </td>
@@ -381,7 +383,7 @@ const Portfolio = () => {
                             </tbody>
                         </table>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div className='tablechart-container' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div >
                             <label style={{
                                 fontWeight:"bold",
@@ -411,10 +413,10 @@ const Portfolio = () => {
                             </label>
                         </div>
                         {refresh ? (
-                            <div className="chart-container">
+                            <div className="charthead-container">
                                 <h2 className="refresh" style={{
                                     alignItems: "center",
-                                    marginLeft: "40%"
+                                    marginLeft: "20%"
                                 }}>Loading...</h2>
                             </div>
                         ) : (

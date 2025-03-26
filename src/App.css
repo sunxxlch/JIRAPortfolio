@@ -66,7 +66,16 @@
 
 
 .table-container {
-  width: 45%;
+  width: 40%;
+  height: 100vh; /* Ensures it stays visible */
+  background-color: #f4f4f4;
+  overflow-y: auto; 
+  display: flex;
+  flex-direction: column;
+}
+
+.tablechart-container{
+  width: 100%;
   height: 100vh; /* Ensures it stays visible */
   background-color: #f4f4f4;
   overflow-y: auto; 
@@ -75,9 +84,11 @@
 }
 
 .charthead-container {
-  width: 70%;
+  width: 50%;
   height: 20%;
   background-color: #fff; 
+  padding-left: 40%;
+  align-content: center;
   
 }
 
@@ -118,7 +129,6 @@
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 5%;
-  table-layout: fixed;
 }
 
 .defect-table th,
@@ -187,7 +197,7 @@
   
   width: 30%;
   height: 30%;
-  padding-top: 5%;
+  padding-top: 4.5%;
   padding-right: 2%;
 }
 
