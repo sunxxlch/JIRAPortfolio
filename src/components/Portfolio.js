@@ -201,7 +201,7 @@ const Portfolio = () => {
             });
 
         } else {
-            response = await api.post(`http://localhost:8080/bugdetailsAdd/${ProjectName}/${portfolioID}/${pid}`, {
+            response = await api.post(`http://10.203.48.66:8080/bugdetailsAdd/${ProjectName}/${portfolioID}/${pid}`, {
                 key: newDefectKey,
                 value: newDefectValue
             });

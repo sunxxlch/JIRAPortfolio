@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "http://10.203.48.66:8080",
 });
 
 // Request Interceptor: Attach access token to every request
@@ -31,7 +31,7 @@ api.interceptors.response.use(
       if (rToken) {
         
         try {
-          const res = await axios.post(`http://localhost:8080/refresh`,  bd );
+          const res = await axios.post(`http://10.203.48.66:8080/refresh`,  bd );
           if (res.status === 200) {
             console.log("Token refreshed successfully!");
             localStorage.removeItem("accessToken");
